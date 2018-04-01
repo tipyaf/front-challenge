@@ -42,11 +42,18 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             token: 'fake-jwt-token'
           };
 
+
           return Observable.of(new HttpResponse({status: 200, body: body}));
         } else {
+
           // else return 400 bad request
-          return Observable.throw(new HttpResponse({status: 400, body: {message: 'Username or password is incorrect'}}));
+          return Observable.throw(new HttpResponse({status: 404, body: {message: 'Username or password is incorrect'}}));
         }
+      }
+
+      // reset-password
+      if (request.url.endsWith('/api/reset-password') && request.method === 'POST') {
+        return Observable.of(new HttpResponse({status: 200, body: request.body.email}));
       }
 
       // get users
@@ -85,7 +92,10 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         // validation
         const duplicateQuestion = users.filter(question => question.questionLabel === newQuestion.questionLabel).length;
         if (duplicateQuestion) {
-          return Observable.throw(new HttpResponse({status: 409, body: {message: 'Question "' + newQuestion.questionLabel + '" is already taken'}}));
+          return Observable.throw(new HttpResponse({
+            status: 409,
+            body: {message: 'Question "' + newQuestion.questionLabel + '" is already taken'}
+          }));
         }
 
         // save new question

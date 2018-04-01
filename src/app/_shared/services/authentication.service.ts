@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {JwtHelperService} from '@auth0/angular-jwt';
+// import {JwtHelperService} from '@auth0/angular-jwt';
 import 'rxjs/add/operator/map';
 
 
@@ -25,6 +25,7 @@ export class AuthenticationService {
           this.setCurrentUser(decodedUser);
         }
 
+        // return true or false
         return this.isLogged;
       });
   }
@@ -32,6 +33,12 @@ export class AuthenticationService {
   logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
+  }
+
+  resetPassword(email) {
+    // send to back end to reset password and send email (in real case we need to create a register page)
+    return this.http.post<any>('/api/reset-password', {email: email})
+      .map(res => res);
   }
 
   setCurrentUser(user) {

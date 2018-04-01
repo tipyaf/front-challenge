@@ -1,0 +1,15 @@
+.message-info {
+  color: #5bc0de;
+}
+
+.message-success {
+  color: #5cb85c;
+}
+
+.message-error {
+  color: red !important;
+}
+
+.form-error {
+  border-color: red !important;
+}

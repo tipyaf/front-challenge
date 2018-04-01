@@ -1,0 +1,10 @@
+.animation-squeeze {
+  -webkit-animation: squeeze 1s; /* Safari 4.0 - 8.0 */
+  animation: squeeze  0.2s;
+}
+
+@keyframes squeeze {
+  0%   {transform: translateX(-4px);}
+  50%  {transform: translateX(4px);}
+  100% {transform: translateX(0px);}
+}

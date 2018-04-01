@@ -1,4 +1,54 @@
-<p>
-  login works!
-</p>
-<button (click)="login()">login</button>
+<div class="login-container" [ngClass]="{'animation-squeeze': isError }">
+  <div class="login-header">
+    <h1>Bienvenue</h1>
+    <p class="message-error" *ngIf="isError">
+      <i class="fa fa-frown-o"></i>
+      {{errorMessage}}
+    </p>
+  </div>
+  <form name="form" [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-12">
+        <div class="ui-inputgroup">
+          <span class="ui-inputgroup-addon" [ngClass]="{'form-error': isError }">
+            <i class="fa fa-user"></i>
+          </span>
+          <input name="username"
+                 formControlName="username"
+                 type="text"
+                 placeholder="Nom d'utilisateur"
+                 [ngClass]="{'form-error': isError }"
+                 (keypress)="onInputsChange()"
+                 pInputText/>
+        </div>
+      </div>
+      <div class="ui-g-12">
+        <div class="ui-inputgroup">
+          <span class="ui-inputgroup-addon" [ngClass]="{'form-error': isError }">
+            <i class="fa fa-lock"></i>
+          </span>
+          <input name="password"
+                 formControlName="password"
+                 type="text"
+                 placeholder="Mot de passe"
+                 [ngClass]="{'form-error': isError }"
+                 (keypress)="onInputsChange($event)"
+                 pInputText/>
+        </div>
+      </div>
+
+      <div class="ui-g-12 login-actions">
+        <button pButton label="S'identifier"
+                [disabled]="loginForm.invalid"
+                *ngIf="!isLoading;else loader">
+
+        </button>
+        <a (click)="onForgivenPassword()">Mot de passe oublié ?</a>
+        <ng-template #loader>
+          <i class="fa fa-spinner fa-spin"></i>
+        </ng-template>
+      </div>
+    </div>
+  </form>
+  <app-login-forgiven-password [(isDisplay)]="isForgivenPassword"></app-login-forgiven-password>
+</div>

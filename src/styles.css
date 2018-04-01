@@ -1,1 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+  margin: 0 !important;
+  font-family: "Nanum Barun Gothic", "Trebuchet MS", Arial, Helvetica, sans-serif;
+}

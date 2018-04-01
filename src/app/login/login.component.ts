@@ -11,52 +11,69 @@ import {AuthenticationService} from '../_shared/services/authentication.service'
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  public isLoading: Boolean;
+  public isLoading: boolean;
   public loginForm: FormGroup;
+  public errorMessage: boolean;
+  public isError: boolean;
+  public isForgivenPassword: boolean;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private authenticationService: AuthenticationService
-              // private alertService: AlertService
-  ) {
+              private authenticationService: AuthenticationService) {
   }
 
   //////////////
 
   ngOnInit() {
+    // prevent init
     this.resetLoginStatus();
-    this.stopLoading();
+    this.hideAlertError();
+
+    // set login form
     this.loginForm = new FormGroup({
-      username: new FormControl('', {
-        validators: [Validators.required, Validators.minLength(3), Validators.maxLength(100)],
-        updateOn: 'change'
-      }),
-      password: new FormControl('', {
-        validators: [Validators.required, Validators.minLength(6)],
-        updateOn: 'change'
-      })
+      username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]),
+      password: new FormControl('', [Validators.required, Validators.minLength(3)])
     });
   }
 
   //////////////
 
   login() {
-    this.startLoading();
-    this.authenticationService.login('admin', 'admin')
+    this.startLoading(); // show spinner
+    this.hideAlertError(); // hide alert eventually
+    // lo
+    this.authenticationService.login(this.loginForm.value.username, this.loginForm.value.password)
       .subscribe(
-        (e) => {
+        () => {
           this.router.navigate(['/home']);
         },
-        error => {
-          // todo add alert primeng message
+        () => {
+          this.showAlertError('Identifiant ou mot de passe incorrect');
           this.stopLoading();
         });
   }
 
   //////////////
 
+  onForgivenPassword() {
+    this.isForgivenPassword = true;
+  }
+
+  onInputsChange() {
+    this.isError = false;
+  }
+
   resetLoginStatus() {
     this.authenticationService.logout();
+  }
+
+  showAlertError(message) {
+    this.isError = true;
+    this.errorMessage = message;
+  }
+
+  hideAlertError() {
+    this.isError = false;
   }
 
   startLoading() {
