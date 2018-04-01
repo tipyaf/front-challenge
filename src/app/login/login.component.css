@@ -1,0 +1,51 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /*noinspection CssUnknownTarget*/
+  background: url("/assets/images/backgrounds/background-ocean.jpg") center no-repeat;
+  background-size: cover;
+  width: 100vw;
+  height: 100vh;
+}
+
+.login-container {
+  width: 320px;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 8px;
+  border-radius: 5px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.login-header {
+  min-height: 120px;
+}
+
+.login-header h1 {
+  width: 100%;
+  text-align: center;
+  font-weight: 100;
+  color: #008fba;
+}
+
+.login-actions {
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.login-actions a {
+  width: 100%;
+  text-align: end;
+  font-size: 12px;
+  color: #008fba;
+  cursor: pointer;
+}
