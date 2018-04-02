@@ -25,15 +25,11 @@ export class LoginComponent implements OnInit {
   //////////////
 
   ngOnInit() {
+    this.setLoginForm();
+
     // prevent init
     this.resetLoginStatus();
     this.hideAlertError();
-
-    // set login form
-    this.loginForm = new FormGroup({
-      username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]),
-      password: new FormControl('', [Validators.required, Validators.minLength(3)])
-    });
   }
 
   //////////////
@@ -44,10 +40,16 @@ export class LoginComponent implements OnInit {
     // lo
     this.authenticationService.login(this.loginForm.value.username, this.loginForm.value.password)
       .subscribe(
-        () => {
-          this.router.navigate(['/home']);
+        user => {
+          if (user.admin) {
+            // if administration go to administration page
+            this.router.navigate(['/administration']);
+          } else {
+            this.router.navigate(['/faq']);
+          }
         },
         () => {
+          // on error
           this.showAlertError('Identifiant ou mot de passe incorrect');
           this.stopLoading();
         });
@@ -61,6 +63,15 @@ export class LoginComponent implements OnInit {
 
   onInputsChange() {
     this.isError = false;
+  }
+
+  /////////////
+
+  setLoginForm() {
+    this.loginForm = new FormGroup({
+      username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]),
+      password: new FormControl('', [Validators.required, Validators.minLength(3)])
+    });
   }
 
   resetLoginStatus() {

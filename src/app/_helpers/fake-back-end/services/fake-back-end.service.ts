@@ -18,10 +18,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     // array in local storage for registered users
     const users: any[] = JSON.parse(sessionStorage.getItem('users')) || [];
-    const questions: any[] = JSON.parse(sessionStorage.getItem('questions')) || [];
+    const questions: any[] = JSON.parse(sessionStorage.getItem('faq')) || [];
 
     // wrap in delayed observable to simulate server api call
     return Observable.of(null).mergeMap(() => {
+
+      // ------------------Authentication ---------------- //
 
       // authenticate
       if (request.url.endsWith('/api/authenticate') && request.method === 'POST') {
@@ -56,6 +58,9 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         return Observable.of(new HttpResponse({status: 200, body: request.body.email}));
       }
 
+      // ------------------Authentication ---------------- //
+
+
       // get users
       if (request.url.endsWith('/api/users') && request.method === 'GET') {
         // check for fake auth token in header and return users if valid, this security is implemented server side in a real application
@@ -68,12 +73,12 @@ export class FakeBackendInterceptor implements HttpInterceptor {
       }
 
       // get user by id
-      if (request.url.match(/\/api\/users\/\d+$/) && request.method === 'GET') {
+      if (request.url.match(/\/api\/user\/\d+$/) && request.method === 'GET') {
         // check for fake auth token in header and return user if valid, this security is implemented server side in a real application
         if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
           // find user by id in users array
           const urlParts = request.url.split('/');
-          const id = parseInt(urlParts[urlParts.length - 1], 180);
+          const id = parseInt(urlParts[urlParts.length - 1], 10);
           const matchedUsers = users.filter(user => user.id === id);
           const user = matchedUsers.length ? matchedUsers[0] : null;
 
@@ -84,9 +89,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         }
       }
 
+      // ------------------FAQ---------------------- //
+
       // create question
       if (request.url.endsWith('api/question') && request.method === 'POST') {
-        // get new user object from post body
+        // get new question object from post body
         const newQuestion = request.body;
 
         // validation
@@ -99,13 +106,44 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         }
 
         // save new question
-        newQuestion.id = users.length + 1;
-        users.push(newQuestion);
+        newQuestion.id = questions.length + 1;
+        questions.push(newQuestion);
         sessionStorage.setItem('faq', JSON.stringify(questions));
 
         // respond 200 OK
-        return Observable.of(new HttpResponse({status: 200}));
+        return Observable.of(new HttpResponse({ status: 200 , body: newQuestion } ));
       }
+
+
+      // get all questions
+      if (request.url.endsWith('/api/questions') && request.method === 'GET') {
+        // check for fake auth token in header and return users if valid, this security is implemented server side in a real application
+        if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
+          return Observable.of(new HttpResponse({status: 200, body: questions}));
+        } else {
+          // return 401 not found if there not questions
+          return Observable.throw(new HttpResponse({ status: 401, body: {message: 'Unauthorised'} }));
+        }
+      }
+
+      // get question by id
+      if (request.url.match(/\/api\/question\/\d+$/) && request.method === 'GET') {
+        // check for fake auth token in header and return user if valid, this security is implemented server side in a real application
+        if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
+          // find question by id in questions array
+          const urlParts = request.url.split('/');
+          const id = parseInt(urlParts[urlParts.length - 1], 10);
+          const matchedQuestion = questions.filter(question => question.id === id);
+          const question = matchedQuestion.length ? matchedQuestion[0] : null;
+
+          return Observable.of(new HttpResponse({status: 200, body: question}));
+        } else {
+          // return 401 not authorised if token is null or invalid
+          return Observable.throw(new HttpResponse({status: 401, body: {message: 'Unauthorised'}}));
+        }
+      }
+
+
       // pass through any requests not handled above
       return next.handle(request);
 

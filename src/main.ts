@@ -14,7 +14,10 @@ if (environment.production) {
 platformBrowserDynamic().bootstrapModule(AppModule)
 // init data from fake db (mock) in the session storage (to delete datas after close app)
   .then(() => {
-    sessionStorage.setItem('users', JSON.stringify(UsersDB));
-    sessionStorage.setItem('faq', JSON.stringify(FaqDB));
+    if (!sessionStorage.getItem('users')) {
+      sessionStorage.setItem('users', JSON.stringify(UsersDB));
+    } else if (!sessionStorage.getItem('faq')) {
+      sessionStorage.setItem('faq', JSON.stringify(FaqDB));
+    }
   })
   .catch(err => console.log(err));

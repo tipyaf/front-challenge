@@ -46,6 +46,7 @@ export class ForgivenPasswordComponent implements OnInit {
           this.sendSuccess();
         },
         () => {
+          // on error
           this.sendError();
         });
   }

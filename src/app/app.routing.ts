@@ -1,18 +1,18 @@
 ﻿import {Routes, RouterModule} from '@angular/router';
-import {HomeComponent} from './home/home.component';
 import {LoginComponent} from './login/login.component';
-import {FaqComponent} from './home/faq/faq/faq.component';
+import {FaqComponent} from './faq/faq/faq.component';
+import {AdministrationComponent} from './administration/administration.component';
+import {AuthAdminService} from './_shared/_guards/auth-admin.service';
 
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: '/home', pathMatch: 'full'},
+  {path: '', redirectTo: '/faq', pathMatch: 'full'},
+  {path: 'faq', component: FaqComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'home', component: HomeComponent, children: [
-      {path: 'faq', component: FaqComponent},
-    ]},
+  {path: 'administration', component: AdministrationComponent, canActivate: [AuthAdminService]},
 
   // otherwise redirect to home
-  {path: '**', redirectTo: '/home'}
+  {path: '**', redirectTo: '/faq'}
 ];
 
 export const routing = RouterModule.forRoot(appRoutes);

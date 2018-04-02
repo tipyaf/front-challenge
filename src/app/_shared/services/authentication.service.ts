@@ -25,8 +25,7 @@ export class AuthenticationService {
           this.setCurrentUser(decodedUser);
         }
 
-        // return true or false
-        return this.isLogged;
+        return user;
       });
   }
 
