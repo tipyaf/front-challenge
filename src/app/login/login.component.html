@@ -1,7 +1,7 @@
 <div class="login-container" [ngClass]="{'animation-squeeze': isError }">
   <div class="login-header">
     <h1>Bienvenue</h1>
-    <p class="message-error" *ngIf="isError">
+    <p class="ui-message ui-messages-error" *ngIf="isError">
       <i class="fa fa-frown-o"></i>
       {{errorMessage}}
     </p>
@@ -32,15 +32,14 @@
                  type="password"
                  placeholder="Mot de passe"
                  [ngClass]="{'form-error': isError }"
-                 (keypress)="onInputsChange($event)"
+                 (keypress)="onInputsChange()"
                  pInputText/>
         </div>
       </div>
-
       <div class="ui-g-12 login-actions">
         <button pButton label="S'identifier"
                 [disabled]="loginForm.invalid"
-                *ngIf="!isLoading;else loader">
+                *ngIf="!isLoading; else loader">
 
         </button>
         <a (click)="onForgivenPassword()">Mot de passe oublié ?</a>

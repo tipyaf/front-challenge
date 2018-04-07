@@ -17,8 +17,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     // array in local storage for registered users
-    const users: any[] = JSON.parse(sessionStorage.getItem('users')) || [];
-    const questions: any[] = JSON.parse(sessionStorage.getItem('faq')) || [];
+    let users: any[] = JSON.parse(sessionStorage.getItem('users')) || [];
+    let questions: any[] = JSON.parse(sessionStorage.getItem('faq')) || [];
 
     // wrap in delayed observable to simulate server api call
     return Observable.of(null).mergeMap(() => {
@@ -28,14 +28,14 @@ export class FakeBackendInterceptor implements HttpInterceptor {
       // authenticate
       if (request.url.endsWith('/api/authenticate') && request.method === 'POST') {
         // find if any user matches login credentials
-        const filteredUsers = users.filter(user => {
+        let filteredUsers = users.filter(user => {
           return user.username === request.body.username && user.password === request.body.password;
         });
 
         if (filteredUsers.length) {
           // if login details are valid return 200 OK with user details and fake jwt token
-          const user = filteredUsers[0];
-          const body = {
+          let user = filteredUsers[0];
+          let body = {
             id: user.id,
             username: user.username,
             firstName: user.firstName,
@@ -48,8 +48,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
           return Observable.of(new HttpResponse({status: 200, body: body}));
         } else {
 
-          // else return 400 bad request
-          return Observable.throw(new HttpResponse({status: 404, body: {message: 'Username or password is incorrect'}}));
+          // else return 403  forbidden (refused)
+          return Observable.throw(new HttpResponse({status: 403, body: {message: 'Username or password is incorrect'}}));
         }
       }
 
@@ -58,46 +58,17 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         return Observable.of(new HttpResponse({status: 200, body: request.body.email}));
       }
 
-      // ------------------Authentication ---------------- //
-
-
-      // get users
-      if (request.url.endsWith('/api/users') && request.method === 'GET') {
-        // check for fake auth token in header and return users if valid, this security is implemented server side in a real application
-        if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
-          return Observable.of(new HttpResponse({status: 200, body: users}));
-        } else {
-          // return 401 not authorised if token is null or invalid
-          return Observable.throw(new HttpResponse({status: 401, body: {message: 'Unauthorised'}}));
-        }
-      }
-
-      // get user by id
-      if (request.url.match(/\/api\/user\/\d+$/) && request.method === 'GET') {
-        // check for fake auth token in header and return user if valid, this security is implemented server side in a real application
-        if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
-          // find user by id in users array
-          const urlParts = request.url.split('/');
-          const id = parseInt(urlParts[urlParts.length - 1], 10);
-          const matchedUsers = users.filter(user => user.id === id);
-          const user = matchedUsers.length ? matchedUsers[0] : null;
-
-          return Observable.of(new HttpResponse({status: 200, body: user}));
-        } else {
-          // return 401 not authorised if token is null or invalid
-          return Observable.throw(new HttpResponse({status: 401, body: {message: 'Unauthorised'}}));
-        }
-      }
+      // ====================== Token needed =============================== //
 
       // ------------------FAQ---------------------- //
 
       // create question
       if (request.url.endsWith('api/question') && request.method === 'POST') {
         // get new question object from post body
-        const newQuestion = request.body;
+        let newQuestion = request.body;
 
         // validation
-        const duplicateQuestion = users.filter(question => question.questionLabel === newQuestion.questionLabel).length;
+        let duplicateQuestion = users.filter(question => question.questionLabel === newQuestion.questionLabel).length;
         if (duplicateQuestion) {
           return Observable.throw(new HttpResponse({
             status: 409,
@@ -105,44 +76,33 @@ export class FakeBackendInterceptor implements HttpInterceptor {
           }));
         }
 
-        // save new question
-        newQuestion.id = questions.length + 1;
-        questions.push(newQuestion);
-        sessionStorage.setItem('faq', JSON.stringify(questions));
-
-        // respond 200 OK
-        return Observable.of(new HttpResponse({ status: 200 , body: newQuestion } ));
-      }
 
 
-      // get all questions
-      if (request.url.endsWith('/api/questions') && request.method === 'GET') {
-        // check for fake auth token in header and return users if valid, this security is implemented server side in a real application
-        if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
-          return Observable.of(new HttpResponse({status: 200, body: questions}));
+        // // check for fake auth token in header and return users if valid, this security is implemented server side in a real application
+        if ((request.headers.get('Authorization') === 'Bearer fake-jwt-token')) {
+
+          // save new question
+          newQuestion.id = questions.length + 1;
+          questions.push(newQuestion);
+          sessionStorage.setItem('faq', JSON.stringify(questions));
+
+          return Observable.of(new HttpResponse({status: 200, body: newQuestion}));
         } else {
-          // return 401 not found if there not questions
-          return Observable.throw(new HttpResponse({ status: 401, body: {message: 'Unauthorised'} }));
-        }
-      }
-
-      // get question by id
-      if (request.url.match(/\/api\/question\/\d+$/) && request.method === 'GET') {
-        // check for fake auth token in header and return user if valid, this security is implemented server side in a real application
-        if (request.headers.get('Authorization') === 'Bearer fake-jwt-token') {
-          // find question by id in questions array
-          const urlParts = request.url.split('/');
-          const id = parseInt(urlParts[urlParts.length - 1], 10);
-          const matchedQuestion = questions.filter(question => question.id === id);
-          const question = matchedQuestion.length ? matchedQuestion[0] : null;
-
-          return Observable.of(new HttpResponse({status: 200, body: question}));
-        } else {
-          // return 401 not authorised if token is null or invalid
+          // return 404 not found if there not questions
           return Observable.throw(new HttpResponse({status: 401, body: {message: 'Unauthorised'}}));
         }
       }
 
+      // get all questions
+      if (request.url.endsWith('/api/questions') && request.method === 'GET') {
+        // don't check token because all question are authorized to everyone
+        if (questions.length > 0) {
+          return Observable.of(new HttpResponse({status: 200, body: questions}));
+        } else {
+          // return 404 not found if there not questions
+          return Observable.throw(new HttpResponse({status: 404, body: {message: 'Not found'}}));
+        }
+      }
 
       // pass through any requests not handled above
       return next.handle(request);
@@ -154,5 +114,6 @@ export class FakeBackendInterceptor implements HttpInterceptor {
       .delay(500)
       .dematerialize();
   }
+
 }
 

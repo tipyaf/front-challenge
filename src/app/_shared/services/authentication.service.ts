@@ -1,18 +1,21 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-// import {JwtHelperService} from '@auth0/angular-jwt';
+import {UserService} from './data/users.service';
+
 import 'rxjs/add/operator/map';
+
+// import {JwtHelperService} from '@auth0/angular-jwt'; // needed with real REST API
 
 
 @Injectable()
 export class AuthenticationService {
-  isLogged = false;
-
   // real back-end that return jwt token we need this
   // helper = new JwtHelperService();
 
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private userService: UserService
+  ) {
   }
 
   login(username: string, password: string) {
@@ -20,9 +23,8 @@ export class AuthenticationService {
       .map(user => {
         // login successful if there's a jwt token in the response
         if (user && user.token) {
-          this.isLogged = true;
-          const decodedUser = user; // with real back-end we need decode jwt token like this:   this.helper.decodeToken(token).user;
-          this.setCurrentUser(decodedUser);
+          let decodedUser = user; // with real back-end we need decode jwt token like this:   this.helper.decodeToken(token).user;
+          this.userService.setCurrentUser(decodedUser); // set the current user in local storage
         }
 
         return user;
@@ -40,8 +42,7 @@ export class AuthenticationService {
       .map(res => res);
   }
 
-  setCurrentUser(user) {
-    // store user details and jwt token in local storage to keep user logged in between page refreshes
-    localStorage.setItem('currentUser', JSON.stringify(user));
+  getIsConnected() {
+    return !!localStorage.getItem('currentUser');
   }
 }

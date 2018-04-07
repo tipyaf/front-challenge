@@ -22,7 +22,7 @@ export class AddFormComponent implements OnInit {
 
   setAddForm() {
     this.addForm = new FormGroup({
-      questionLabel: new FormControl('', [Validators.required, Validators.minLength(10)]),
+      questionLabel: new FormControl('', [Validators.required, Validators.minLength(3)]),
       responseLabel: new FormControl('', [Validators.required, Validators.minLength(3)]),
       tags: new FormControl('')
     });

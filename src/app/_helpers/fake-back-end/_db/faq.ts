@@ -4,7 +4,7 @@ export const FaqDB = [
     questionLabel: 'Dois-je poser une question intelligente ?',
     responseLabel: 'Cela ne serait pas bête.',
     'tags': [
-      'intelligence',
+      'philosophie',
       'existentiel'
     ]
   }

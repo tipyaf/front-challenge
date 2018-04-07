@@ -1,5 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
 body {
+  width: 100%;
+  min-height: 100vh;
   margin: 0 !important;
+  padding-top: 0 !important;
   font-family: "Nanum Barun Gothic", "Trebuchet MS", Arial, Helvetica, sans-serif;
+  /*noinspection CssUnknownTarget*/
+  background: url("/assets/images/backgrounds/background-ocean.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+
+textarea,
+input,
+span,
+div,
+button {
+  outline: none !important;
+}
+
+a {
+  color: #199CC1;
+  cursor: pointer;
+}
+
+a:hover,
+a:focus {
+  color: #199CC1;
+}
+
+.page-menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.page-content {
+  min-height: 80vh;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.88);
+}
+
+.page-content h1 {
+  text-align: center;
+}
+
+.search-container {
+  max-width: 300px;
 }

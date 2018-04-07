@@ -1,19 +1,18 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {AuthenticationService} from '../../../_shared/services/authentication.service';
+import {AuthenticationService} from '../../_shared/services/authentication.service';
 
 @Component({
   selector: 'app-login-forgiven-password',
-  templateUrl: './forgiven-password.component.html',
-  styleUrls: ['./forgiven-password.component.css']
+  templateUrl: './forgiven-password.component.html'
 })
 export class ForgivenPasswordComponent implements OnInit {
   @Input() isDisplay: boolean;
   @Output() isDisplayChange = new EventEmitter();
 
-  public forgivenForm: FormGroup;
-  public isSendError: boolean;
-  public isSendSuccess: boolean;
+  forgivenForm: FormGroup;
+  isSendBtnDisabled: boolean;
+  message: string;
 
   constructor(private authentication: AuthenticationService) {
   }
@@ -22,7 +21,7 @@ export class ForgivenPasswordComponent implements OnInit {
 
   ngOnInit() {
     this.setInitialVariables();
-    this.setForgivenForm();
+    this.setForgivenForm(); // create FormGroup with validators
   }
 
   //////////////
@@ -34,36 +33,43 @@ export class ForgivenPasswordComponent implements OnInit {
   }
 
   setInitialVariables() {
-    this.isSendSuccess = false;
-    this.isSendError = false;
+    this.isSendBtnDisabled = false;
+    this.message = null;
   }
 
   //////////////
 
   send() {
+    this.message = null;
     this.authentication.resetPassword(this.forgivenForm.value.email)
       .subscribe(() => {
+        // on success
           this.sendSuccess();
         },
         () => {
           // on error
+          console.log('rr');
           this.sendError();
         });
   }
 
   sendSuccess() {
-    this.isSendError = false;
-    this.isSendSuccess = true;
+    this.isSendBtnDisabled = true; // disabled button send
+    this.message = 'success'; // show success message
+    this.forgivenForm.reset(); // clear email in input
   }
 
   sendError() {
-    this.isSendSuccess = false;
-    this.isSendError = true;
+    this.isSendBtnDisabled = false; // enable button send
+    this.message = 'error'; // show error message
   }
 
   close() {
-    this.isDisplay = false;
-    this.isDisplayChange.emit(false);
+    this.isSendBtnDisabled = false; // enable button send
+    this.message = null; // init message
+    this.forgivenForm.reset(); // clear email in input
+    this.isDisplay = false; // set close
+    this.isDisplayChange.emit(false); // emit to parent (login)
   }
 
 

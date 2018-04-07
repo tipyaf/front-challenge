@@ -1,8 +1,6 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {FaqService} from '../_shared/services/faq.service';
-import {ToastrService} from 'ngx-toastr';
-import {Faq} from '../_models';
-import {AddComponent} from './add/add.component';
+import {Component, OnInit} from '@angular/core';
+import {MenuItem} from 'primeng/api';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-administration',
@@ -10,22 +8,15 @@ import {AddComponent} from './add/add.component';
   styleUrls: ['./administration.component.css']
 })
 export class AdministrationComponent implements OnInit {
-  @ViewChild(AddComponent) addComponent;
 
-  questionsList: Faq[] = [];
-  isTableLoading: boolean;
-  isAddButtonLoading: boolean;
+  tabs: MenuItem[];
 
-  constructor(private faqService: FaqService,
-              private toastr: ToastrService,
-  ) {
+  constructor(private router: Router) {
   }
-
   //////////////
 
   ngOnInit() {
     this.setInitialVariables();
-    this.getQuestionsList();
   }
 
   //////////////
@@ -33,107 +24,17 @@ export class AdministrationComponent implements OnInit {
   // -- variables to init -- /
 
   setInitialVariables() {
-    this.isTableLoading = false;
-    this.isAddButtonLoading = false;
-  }
+    // set menu tabs
+    this.tabs = [
+      {label: 'Liste des questions', icon: 'fa-list', routerLink: 'list'},
+      {label: 'Ajouter une question', icon: 'fa-pencil-square-o', routerLink: 'add'}
+    ];
+    }
 
   //////////////
 
-  // -- Datas -- /
-
-  getQuestionsList() {
-    this.questionsList = [];
-    this.startTableLoading();
-
-    this.faqService.getAll()
-      .subscribe(list => {
-          this.whenSuccessGetQuestionsList(list);
-        },
-        () => {
-        // on error
-          this.whenErrorGetQuestionsList();
-        });
-  }
-
-  createQuestion(questionToAdd) {
-
-    this.startAddButtonLoading();
-
-    // // add question to db with faqService
-    this.faqService.add(questionToAdd)
-      .subscribe(question => {
-
-          this.whenSuccessAdd(question);
-          this.stopAddButtonLoading();
-
-        },
-        () => {
-          // on error
-          this.whenErrorAdd(questionToAdd);
-          this.stopAddButtonLoading();
-        });
-  }
-
-  //////////////////
-
-  // -- datas responses actions -- /
-
-  whenSuccessGetQuestionsList(list) {
-    list.map(question => {
-      this.questionsList.push(question);
-    });
-    this.stopTableLoading();
-  }
-
-  whenErrorGetQuestionsList() {
-    this.stopTableLoading();
-    this.toastr.error(`Une erreur est survenue lors du chargement de la liste de questions.`, 'Questions non disponibles');
-  }
-
-  whenSuccessAdd(question) {
-    this.addNewQuestionToTable(question);
-    this.resetAddForm();
-    this.toastr.success(`La question "${question.questionLabel}" a été ajoutée.`, 'Question ajoutée !');
-  }
-
-  whenErrorAdd(question) {
-    this.toastr.error('Non ajoutée', `Une erreur est survenue lors de l'ajout de la question "${question.questionLabel}".Veuillez réesseayer`);
-  }
-
-  ////////////////
-
-  // -- view actions -- /
-
-  // - add tab - /
-  resetAddForm() {
-    this.addComponent.addFormComponent.addForm.reset();
-  }
-
-  // - list tab - /
-  addNewQuestionToTable(newQuestion) {
-    this.questionsList.push(newQuestion);
-  }
-
-
-
-  ///////////////
-
-  // -- loaders -- /
-
-  startAddButtonLoading() {
-    this.isAddButtonLoading = true;
-  }
-
-  stopAddButtonLoading() {
-    this.isAddButtonLoading = false;
-  }
-
-  startTableLoading() {
-    this.isTableLoading = true;
-  }
-
-  stopTableLoading() {
-    this.isTableLoading = false;
+  onDeconnect() {
+    this.router.navigate(['/faq']); // on log out go to Faq
   }
 
 }

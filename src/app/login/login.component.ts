@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 
 import {AuthenticationService} from '../_shared/services/authentication.service';
+import {ErrorsHandlerService} from '../_shared/services/errors/errors-handler.service';
 
 
 @Component({
@@ -11,15 +12,17 @@ import {AuthenticationService} from '../_shared/services/authentication.service'
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  public isLoading: boolean;
-  public loginForm: FormGroup;
-  public errorMessage: boolean;
-  public isError: boolean;
-  public isForgivenPassword: boolean;
+  isLoading: boolean;
+  loginForm: FormGroup;
+  errorMessage: boolean;
+  isError: boolean;
+  isForgivenPassword: boolean;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private authenticationService: AuthenticationService) {
+              private authenticationService: AuthenticationService,
+              private errorService: ErrorsHandlerService
+  ) {
   }
 
   //////////////
@@ -37,37 +40,54 @@ export class LoginComponent implements OnInit {
   login() {
     this.startLoading(); // show spinner
     this.hideAlertError(); // hide alert eventually
-    // lo
+    // authenticate
     this.authenticationService.login(this.loginForm.value.username, this.loginForm.value.password)
       .subscribe(
         user => {
-          if (user.admin) {
-            // if administration go to administration page
-            this.router.navigate(['/administration']);
-          } else {
-            this.router.navigate(['/faq']);
-          }
+          // on success
+          this.whenLoginSuccess(user);
         },
-        () => {
+        (error) => {
           // on error
-          this.showAlertError('Identifiant ou mot de passe incorrect');
-          this.stopLoading();
+          this.whenLoginError(error);
         });
+  }
+
+  //////////////////
+
+  // -- datas responses actions -- /
+
+  whenLoginSuccess(user) {
+    // check role
+    if (user.admin) {
+      this.router.navigate(['/administration']); // if administration role go to administration page
+    } else {
+      this.router.navigate(['/faq']); // other connected users go to faq page
+    }
+    // remove spinner
+    this.stopLoading();
+  }
+
+  whenLoginError(error) {
+    this.showAlertError('Identifiant ou mot de passe incorrect'); // show message error in form container
+    this.stopLoading(); // remove spinner
+    this.errorService.catch(error); // handle error in service
   }
 
   //////////////
 
   onForgivenPassword() {
-    this.isForgivenPassword = true;
+    this.isForgivenPassword = true; // display modal forgiven password
   }
 
   onInputsChange() {
-    this.isError = false;
+    this.hideAlertError(); // remove error alert on keypress
   }
 
   /////////////
 
   setLoginForm() {
+    // create FormGroup form with validators
     this.loginForm = new FormGroup({
       username: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]),
       password: new FormControl('', [Validators.required, Validators.minLength(3)])

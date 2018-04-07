@@ -1,38 +1,36 @@
 import {Component, OnInit} from '@angular/core';
-import {Faq} from '../../_models';
-import {FaqService} from '../../_shared/services/data/faq.service';
+import { FaqService } from '../_shared/services/data/faq.service';
+import {Faq} from '../_models/index';
 import {ToastrService} from 'ngx-toastr';
 import * as _ from 'lodash';
-import {ErrorsHandlerService} from '../../_shared/services/errors/errors-handler.service';
+import {AuthenticationService} from '../_shared/services/authentication.service';
+import {ErrorsHandlerService} from '../_shared/services/errors/errors-handler.service';
 
 @Component({
-  selector: 'app-administration-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.css']
+  selector: 'app-faq',
+  templateUrl: './faq.component.html',
+  styleUrls: ['./faq.component.css']
 })
-export class ListComponent implements OnInit {
+export class FaqComponent implements OnInit {
   questionsList: Faq[];
-  isTableLoading: boolean;
   inputSearch: string;
+  isLoading: boolean;
+  isConnected: boolean;
 
   constructor(private faqService: FaqService,
               private toastr: ToastrService,
+              private authentication: AuthenticationService,
               private errorService: ErrorsHandlerService
-
   ) {
   }
 
   //////////////
 
   ngOnInit() {
-    this.setInitialVariables();
+    this.startLoading();
     this.getQuestionsList();
-  }
+    this.isConnected = this.authentication.getIsConnected();
 
-  //////////////
-
-  setInitialVariables() {
-    this.isTableLoading = false;
   }
 
   //////////////
@@ -51,7 +49,7 @@ export class ListComponent implements OnInit {
 
   // call service to load FAQ
   loadFaq() {
-    this.startTableLoading();
+    this.startLoading();
 
     this.questionsList = []; // init variable
 
@@ -59,7 +57,7 @@ export class ListComponent implements OnInit {
       .subscribe(faqList => {
           this.whenSuccessGetQuestionsList(faqList);
         },
-        error => {
+        (error) => {
           // on error
           this.whenErrorGetQuestionsList(error);
         });
@@ -72,27 +70,27 @@ export class ListComponent implements OnInit {
 
   whenSuccessGetQuestionsList(faqList) {
     this.questionsList = faqList; // set list
-    this.stopTableLoading();
-
+    this.stopLoading();
   }
 
   whenErrorGetQuestionsList(error) {
     this.questionsList = []; // set empty list
     this.toastr.error(`Une erreur est survenue lors du chargement de la liste de questions.`, 'Questions non disponibles'); // show error message
-    this.stopTableLoading();
-    this.errorService.catch(error); // handle error in service
+    this.stopLoading();
+    this.errorService.catch(error);
   }
 
-  /////////////
+  ///////////////
 
-  // -loaders - /
-
-  startTableLoading() {
-    this.isTableLoading = true;
+  onDeconnect() {
+    this.isConnected = false;
   }
 
-  stopTableLoading() {
-    this.isTableLoading = false;
+  startLoading() {
+    this.isLoading = true;
   }
 
+  stopLoading() {
+    this.isLoading = false;
+  }
 }
