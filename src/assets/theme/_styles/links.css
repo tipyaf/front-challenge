@@ -1,0 +1,8 @@
+.link-page {
+  background-color: #5ac0df;
+  color: white !important;
+  padding: 5px;
+  text-decoration: none !important;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}

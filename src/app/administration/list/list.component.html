@@ -1,0 +1,16 @@
+<div class="administration-tool">
+  <div class="administration-header">
+    <h3>Liste des questions / réponses</h3>
+  </div>
+  <div>
+    <div class="administration-search">
+      <app-shared-component-faq-search [(model)]="inputSearch" [label]="'Recherche'"></app-shared-component-faq-search>
+    </div>
+    <div>
+      <app-administration-list-table [list]="questionsList | faqSearchFilter: inputSearch"
+                                     [loading]="isTableLoading">
+
+      </app-administration-list-table>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 export class Faq {
-  id: number;
+  id?: number;
   questionLabel: string;
-  askLabel: string;
+  responseLabel: string;
   tags: string[];
 }

@@ -1,0 +1,19 @@
+<div class="administration-tool">
+  <div class="administration-header">
+    <h3>Ajouter une nouvelle question / réponse</h3>
+  </div>
+  <div class="administration-body">
+    <app-administration-add-form></app-administration-add-form>
+    <div class="action-add-question">
+      <button pButton type="button" label="Ajouter" class="ui-button-secondary"
+              [disabled]="addFormComponent.addForm.invalid"
+              (click)="onAddQuestion()"
+              *ngIf="!isAddButtonLoading; else loader">
+
+      </button>
+      <ng-template #loader>
+        <span class="ui-message ui-messages-info">Ajout en cours...</span>
+      </ng-template>
+    </div>
+  </div>
+</div>

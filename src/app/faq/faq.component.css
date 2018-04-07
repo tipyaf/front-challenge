@@ -1,0 +1,10 @@
+:host .faq-search {
+  margin: auto auto 15px;
+  max-width: 500px;
+}
+
+:host .faq-questions {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: rgba(203, 203, 204, 0.17);
+}

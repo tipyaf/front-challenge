@@ -19,12 +19,15 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
+        "../node_modules/ngx-toastr/toastr.css",
         "../node_modules/typeface-nanum-barun-gothic/nanumbarungothic.css",
         "../node_modules/font-awesome/css/font-awesome.min.css",
-        "../node_modules/primeng/resources/themes/bootstrap/theme.css",
+        "../node_modules/primeng/resources/themes/omega/theme.css",
         "../node_modules/primeng/resources/primeng.min.css",
-        "app/_helpers/_styles/animations.css",
-        "app/_helpers/_styles/errors.css",
+        "assets/theme/_styles/text.css",
+        "assets/theme/_styles/links.css",
+        "assets/theme/_styles/animations.css",
+        "assets/theme/_overides/primeng/ui-message/ui-message.css",
         "styles.css"
       ],
       "scripts": [],

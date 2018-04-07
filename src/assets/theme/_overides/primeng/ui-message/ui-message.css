@@ -1,0 +1,8 @@
+.ui-message {
+  border-radius: 4px;
+}
+
+.ui-messages-error {
+  color: white !important;
+  background-color: #ef3d32 !important;
+}

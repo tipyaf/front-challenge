@@ -1,0 +1,5 @@
+:host .search-container .ui-g {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

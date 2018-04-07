@@ -1,0 +1,8 @@
+<div class="page-menu">
+  <a routerLink="/faq" class="link-page">Voir la FAQ publique</a>
+  <app-shared-component-connexions-controls (deconnect)="onDeconnect()"></app-shared-component-connexions-controls>
+</div>
+  <div class="page-content">
+    <p-tabMenu [model]="tabs"></p-tabMenu>
+    <router-outlet></router-outlet>
+  </div>

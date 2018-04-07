@@ -1,0 +1,24 @@
+<p-table [columns]="cols" [value]="list" [paginator]="true" [rows]="15" [loading]="loading">
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns">
+        {{col.header}}
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr>
+      <td *ngFor="let col of columns" [ngSwitch]="col.field">
+        <span *ngIf="col.field !== 'tags'; else tagsColumn">
+          {{rowData[col.field]}}
+        </span>
+        <ng-template #tagsColumn>
+          <span class="ui-chips-token ui-state-highlight ui-corner-all"
+                *ngFor="let tag of rowData[col.field]">
+            {{tag}}
+          </span>
+        </ng-template>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

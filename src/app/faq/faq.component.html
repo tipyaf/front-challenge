@@ -1,0 +1,25 @@
+<div class="page-menu">
+  <a routerLink="/administration" class="link-page" *ngIf="isConnected">Aller sur la page administration</a>
+  <app-shared-component-connexions-controls (deconnect)="onDeconnect()"></app-shared-component-connexions-controls>
+</div>
+<div class="page-content">
+  <h1>Bienvenue sur notre FAQ</h1>
+  <div class="faq-search">
+    <app-shared-component-faq-search [(model)]="inputSearch" [label]="'Votre question'"></app-shared-component-faq-search>
+  </div>
+  <div class="faq-questions">
+    <p-accordion *ngIf="questionsList.length > 0; else nothingToShow">
+      <p-accordionTab header="{{question.questionLabel}}" *ngFor="let question of questionsList | faqSearchFilter: inputSearch">
+        {{question.responseLabel}}
+      </p-accordionTab>
+    </p-accordion>
+  </div>
+</div>
+
+<!--if no question-->
+<ng-template #nothingToShow>
+  <div class="empty-alert">
+    <p class="ui-message ui-messages-info">Il n'y a aucune question dans notre base de donnée.</p>
+  </div>
+
+</ng-template>

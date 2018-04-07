@@ -1,0 +1,5 @@
+:host textarea {
+  width: 100%;
+  resize: none;
+  font-size: 1rem;
+}
