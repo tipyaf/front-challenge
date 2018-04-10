@@ -10,17 +10,15 @@ export class FaqFilterPipe implements PipeTransform {
     // check if input is not empty
     if (!!input) {
       // formatting input
-      let myInput = input.toLowerCase();
+      let myInput = _.toLower(input);
 
       return questionList.filter(question => {
         // formatting data values
-        let questionLabel = question.questionLabel.toLowerCase();
-        let tags = JSON.stringify(question.tags).toLowerCase();
-        // create sting with 2 datas
-        let concatedDatas = `${questionLabel}${tags}`;
-
+        let questionLabel = _.toLower(question.questionLabel);
+        let tags = _.toLower(_.replace(_.map(question.tags).join(','), ',', ''));
+        console.log(questionLabel, tags, _.includes(questionLabel, myInput),  _.includes(tags, myInput));
         // filter
-        return _.includes(concatedDatas, myInput);
+        return _.includes(questionLabel, myInput) || _.includes(tags, myInput);
       });
     } else {
       // if input is empty return question list
