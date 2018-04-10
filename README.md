@@ -4,7 +4,7 @@ Projet réalisé dans le cadre du challenge front-end de **[NETHEOS](http://www.
 
 #### Technos utilisées
 
-**Angular 5.2.0** (CLI) + **[PrimeNG](https://www.primefaces.org/primeng/#/)** + **[json-server](https://github.com/typicode/json-server)** (pour simuler les appels REST)
+**Angular 5.2.0** (CLI) + **[PrimeNG](https://www.primefaces.org/primeng/#/)**
 
 ## Installation et démarrage
 
